@@ -6,7 +6,7 @@ const {
   crearTask,
   actualizarTask,
   eliminarTask,
-} = require("../Controllers/task.js");
+} = require('../Controllers/Task');
 
 router.use(validarJWT);
 
