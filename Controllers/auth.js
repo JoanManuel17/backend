@@ -1,6 +1,7 @@
 const express = require("express");
 const bcrypt = require("bcryptjs");
 const Usuario = require("../models/Usuario");
+const { generarJWT } = require("../helpers/jwt"); 
 
 const crearUsuario = async (req, res = express.request) => {
   const { name, email, password } = req.body;
@@ -53,26 +54,36 @@ const loginUsuario = async (req, res = express.request) => {
       });
     }
 
+    const token = await generarJWT(usuario.id, usuario.name);
+
     res.status(200).json({
       ok: true,
-      msg: "Login",
       usuario,
+      token
     });
+
   } catch (error) {
     console.log(error);
     res.status(500).json({
       ok: false,
-      msg: "Error al crear usuario",
+      msg: "Error",
     });
     }
 }
 
-  const revalidarToken = (req, res = express.request) => {
-    res.json({ ok: true, msg: "Renovar Token" });
-  };
+const revalidarToken = async (req, res = express.request) => {
+  const { uid, name } = req;
+
+  const token = await (generarJWT(uid, name));
+
+  res.json({
+    ok: true,
+    token
+  });
+}
 
 module.exports = {
   crearUsuario,
   loginUsuario,
-  revalidarToken,
+  revalidarToken
 };
